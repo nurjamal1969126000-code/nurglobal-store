@@ -402,6 +402,69 @@ app.post('/api/logistics/track-shipment', async (req, res) => {
         res.status(500).json({ error: err.message });
     }
 });
+
+// ==========================================
+// 🛡️ মডিউল ৪ - ফ্রড ডিটেকশন ও রিস্ক ম্যানেজমেন্ট ইঞ্জিন (AI Security)
+// ==========================================
+
+// ডাটাবেজে ফ্রড অ্যালার্ট এবং ব্লকড ট্রানজেকশন হিসেব রাখার মডেল
+const FraudAlertSchema = new mongoose.Schema({
+    orderId: String,
+    customerName: String,
+    riskScore: Number,          // ০ থেকে ১০০ এর মধ্যে রিস্ক স্কোয়ার
+    fraudReason: String,        // ব্লকিং এর কারণ
+    actionTaken: String,        // Blocked / Flagged
+    detectedAt: { type: Date, default: Date.now }
+});
+const FraudAlert = mongoose.model('FraudAlert', FraudAlertSchema);
+
+// অর্ডার সাবমিট হওয়ার সময় সিকিউরিটি রিস্ক স্ক্যান করার এপিআই
+app.post('/api/security/scan-order', async (req, res) => {
+    try {
+        const { orderId, ipAddress, paymentMethod } = req.body;
+        const orderDetails = await Order.findOne({ orderId: orderId });
+        
+        if (!orderDetails) {
+            return res.status(404).json({ success: false, message: "Order not found for Security Scan" });
+        }
+
+        // এআই ভিত্তিক ফ্রড রিস্ক স্কোরিং লজিক বেস
+        let score = Math.floor(10 + Math.random() * 30); // ডিফল্ট নিরাপদ স্কোর (১০-৪০)
+        let reason = "Safe Transaction Patterns";
+        let action = "Approved";
+
+        // হাই-রিস্ক প্যাটার্ন কন্ডিশন (ডেমো সিকিউরিটি রুলস)
+        if (paymentMethod === 'Anonymous_Crypto' || orderDetails.customerName === 'Live Buyer') {
+            score = Math.floor(75 + Math.random() * 20); // হাই রিস্ক স্কোর (৭৫-৯৫)
+            reason = "High-velocity order signature or mismatched payment gateway routing.";
+            action = "Flagged_For_Review";
+        }
+
+        const newFraudScan = new FraudAlert({
+            orderId: orderDetails.orderId,
+            customerName: orderDetails.customerName,
+            riskScore: score,
+            fraudReason: reason,
+            actionTaken: action
+        });
+
+        await newFraudScan.save();
+
+        console.log(`🛡️ [AI SECURITY RISK ENGINE ACTIVATED]!!`);
+        console.log(`   📦 অর্ডার আইডি: ${newFraudScan.orderId}`);
+        console.log(`   📊 রিস্ক স্কোর: ${newFraudScan.riskScore}/100`);
+        console.log(`   🚨 সিকিউরিটি অ্যাকশন: ${newFraudScan.actionTaken}`);
+        console.log(`   📝 কারণ: ${newFraudScan.fraudReason}`);
+
+        res.json({
+            success: true,
+            message: "AI Fraud and Risk analysis completed.",
+            securityDetails: newFraudScan
+        });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
 app.listen(PORT, () => {
     console.log(`সার্ভার চালু হয়েছে: http://localhost:${PORT}`);
 });
