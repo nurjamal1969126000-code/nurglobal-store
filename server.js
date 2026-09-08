@@ -1020,6 +1020,51 @@ app.post('/api/wallet/payout-request', async (req, res) => {
         res.status(500).json({ error: err.message });
     }
 });
+
+// ==========================================
+// 🏆 মডিউল ১৯ - এআই ড্রপশিপিং লিডারবোর্ড ও গ্লোবাল পারফরম্যান্স ট্র্যাকার
+// ==========================================
+
+// ডাটাবেজে গ্লোবাল সাপ্লায়ার লিডারবোর্ড ও পারফরম্যান্স হিসেব রাখার মডেল
+const LeaderboardSchema = new mongoose.Schema({
+    supplierCompany: String,
+    totalSalesCount: Number,     // মোট বিক্রিত পণ্যের সংখ্যা
+    totalRevenueUSD: Number,     // মোট অর্জিত রেভিনিউ
+    globalRank: Number,          // বিশ্বব্যাপী র‍্যাঙ্কিং স্থান
+    performanceRating: Number,   // ০ থেকে ৫ এর মধ্যে রেটিং
+    lastAnalyzed: { type: Date, default: Date.now }
+});
+const Leaderboard = mongoose.model('Leaderboard', LeaderboardSchema);
+
+// ডাটাবেজ থেকে রিয়েল-টাইমে টপ সাপ্লায়ারদের লিডারবোর্ড ডেটা প্রসেস করার এপিআই
+app.get('/api/leaderboard/global-rank', async (req, res) => {
+    try {
+        // ডাটাবেজ থেকে টপ সেলস হওয়া ৫ জন সাপ্লায়ারের ডেটা সর্ট করে আনা
+        let topSuppliers = await Leaderboard.find().sort({ totalSalesCount: -1 }).limit(5);
+        
+        // যদি ডাটাবেজ একদম নতুন বা খালি হয়, তবে ডেমো লাইভ লিডারবোর্ড জেনারেট করা
+        if (topSuppliers.length === 0) {
+            topSuppliers = [
+                { supplierCompany: "NUR GLOBAL LOGISTICS (HQ)", totalSalesCount: 1540, totalRevenueUSD: 77000, globalRank: 1, performanceRating: 4.9 },
+                { supplierCompany: "Asia Pacific Trading Hub", totalSalesCount: 980, totalRevenueUSD: 49000, globalRank: 2, performanceRating: 4.7 },
+                { supplierCompany: "EuroExpress Supply Corp", totalSalesCount: 720, totalRevenueUSD: 36000, globalRank: 3, performanceRating: 4.5 },
+                { supplierCompany: "Americas Premium Dropshipper", totalSalesCount: 450, totalRevenueUSD: 22500, globalRank: 4, performanceRating: 4.2 }
+            ];
+        }
+
+        console.log(`🏆 [AI DROPSHIPPING LEADERBOARD ENGINE ACTIVATED]!!`);
+        console.log(`   📊 গ্লোবাল র‍্যাঙ্কিং এবং পারফরম্যান্স ট্র্যাকিং সফলভাবে সিঙ্ক হয়েছে।`);
+        console.log(`   👑 শীর্ষ ড্রপশিপার: ${topSuppliers[0].supplierCompany} (${topSuppliers[0].totalSalesCount} Sales)`);
+
+        res.json({
+            success: true,
+            message: "Global Dropshipping AI leaderboard and performance tracking sync completed.",
+            leaderboard: topSuppliers
+        });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
 app.listen(PORT, () => {
     console.log(`সার্ভার চালু হয়েছে: http://localhost:${PORT}`);
 });
