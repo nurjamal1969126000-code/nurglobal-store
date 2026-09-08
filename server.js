@@ -465,6 +465,76 @@ app.post('/api/security/scan-order', async (req, res) => {
         res.status(500).json({ error: err.message });
     }
 });
+
+// ==========================================
+// 📦 মডিউল ৫ - মাল্টি-সাপ্লায়ার ইনভেন্টরি অটোমেশন ইঞ্জিন
+// ==========================================
+
+// ডাটাবেজে প্রোডাক্ট ইনভেন্টরি ও স্টক ট্র্যাক করার মডেল
+const InventoryTrackerSchema = new mongoose.Schema({
+    productId: { type: mongoose.Schema.Types.ObjectId, ref: 'Product' },
+    productTitle: String,
+    stockCount: Number,          // বর্তমান স্টক সংখ্যা
+    restockLevel: Number,        // সর্বনিম্ন স্টক লেভেল (অ্যালার্টের জন্য)
+    inventoryStatus: { type: String, default: 'In_Stock' },
+    lastUpdated: { type: Date, default: Date.now }
+});
+const InventoryTracker = mongoose.model('InventoryTracker', InventoryTrackerSchema);
+
+// অর্ডার হওয়ার পর বা সাপ্লায়ার স্টক আপডেট করার এপিআই
+app.post('/api/inventory/update-stock', async (req, res) => {
+    try {
+        const { productId, quantityOrdered } = req.body;
+        const product = await Product.findById(productId);
+        
+        if (!product) {
+            return res.status(404).json({ success: false, message: "Product not found for Inventory Update" });
+        }
+
+        // ডাটাবেজ থেকে ইনভেন্টরি রেকর্ড খোঁজা বা নতুন তৈরি করা
+        let inventory = await InventoryTracker.findOne({ productId: product._id });
+        
+        if (!inventory) {
+            inventory = new InventoryTracker({
+                productId: product._id,
+                productTitle: product.title,
+                stockCount: 100, // ডিফল্ট ১০০ স্টক
+                restockLevel: 10
+            });
+        }
+
+        // কাস্টমার অর্ডার দিলে স্টক মাইনাস করার লজিক
+        if (quantityOrdered) {
+            inventory.stockCount -= quantityOrdered;
+        }
+
+        // স্টক লেভেল চেক করে স্বয়ংক্রিয় স্ট্যাটাস চেঞ্জ
+        if (inventory.stockCount <= 0) {
+            inventory.stockCount = 0;
+            inventory.inventoryStatus = 'Out_of_Stock';
+        } else if (inventory.stockCount <= inventory.restockLevel) {
+            inventory.inventoryStatus = 'Low_Stock_Alert';
+        } else {
+            inventory.inventoryStatus = 'In_Stock';
+        }
+
+        inventory.lastUpdated = new Date();
+        await inventory.save();
+
+        console.log(`📦 [INVENTORY AUTOMATION ENGINE ACTIVATED]!!`);
+        console.log(`   📦 প্রোডাক্ট: ${inventory.productTitle}`);
+        console.log(`   🔢 বর্তমান অবশিষ্ট স্টক: ${inventory.stockCount}`);
+        console.log(`   🚨 ইনভেন্টরি স্ট্যাটাস: ${inventory.inventoryStatus}`);
+
+        res.json({
+            success: true,
+            message: "Multi-supplier inventory updated successfully.",
+            inventoryDetails: inventory
+        });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
 app.listen(PORT, () => {
     console.log(`সার্ভার চালু হয়েছে: http://localhost:${PORT}`);
 });
