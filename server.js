@@ -1354,3 +1354,4 @@ app.listen(PORT, () => {
 // live stripe and paypal integration patch
 // live bank withdrawal and currency conversion patch
 // live admin card and bank wallet interface patch
+// final dashboard redirect path sync
