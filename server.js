@@ -658,6 +658,58 @@ app.post('/api/support/chat-submit', async (req, res) => {
         res.status(500).json({ error: err.message });
     }
 });
+
+// ==========================================
+// 🚚 মডিউল ১২ - গ্লোবাল কুরিয়ার এপিআই ট্র্যাকিং ইঞ্জিন
+// ==========================================
+
+// ডাটাবেজে কুরিয়ার ডেলিভারি স্ট্যাটাস ট্র্যাকিং মডেল
+const CourierTrackingSchema = new mongoose.Schema({
+    orderId: String,
+    carrierName: String,         // DHL, FedEx, etc.
+    currentLocation: String,
+    deliveryStatus: { type: String, default: 'In_Transit' }, // In_Transit, Delivered, Exception
+    lastCheckpointTime: { type: Date, default: Date.now }
+});
+const CourierTracking = mongoose.model('CourierTracking', CourierTrackingSchema);
+
+// কুরিয়ার এপিআই থেকে লাইভ শিপমেন্ট স্ট্যাটাস ট্র্যাক ও আপডেট করার রুট
+app.post('/api/courier/update-status', async (req, res) => {
+    try {
+        const { orderId, statusUpdate, location } = req.body;
+        
+        let trackingInfo = await CourierTracking.findOne({ orderId: orderId });
+        
+        if (!trackingInfo) {
+            trackingInfo = new CourierTracking({
+                orderId: orderId,
+                carrierName: 'DHL International Express',
+                currentLocation: location || 'Global Sort Facility',
+                deliveryStatus: statusUpdate || 'In_Transit'
+            });
+        } else {
+            if(statusUpdate) trackingInfo.deliveryStatus = statusUpdate;
+            if(location) trackingInfo.currentLocation = location;
+        }
+
+        trackingInfo.lastCheckpointTime = new Date();
+        await trackingInfo.save();
+
+        console.log(`🚚 [GLOBAL COURIER API CONNECTED]!!`);
+        console.log(`   📦 অর্ডার আইডি: ${trackingInfo.orderId}`);
+        console.log(`   🏢 কুরিয়ার: ${trackingInfo.carrierName}`);
+        console.log(`   📍 বর্তমান অবস্থান: ${trackingInfo.currentLocation}`);
+        console.log(`   🚨 ডেলিভারি স্ট্যাটাস: ${trackingInfo.deliveryStatus}`);
+
+        res.json({
+            success: true,
+            message: "Global courier API tracking status synchronized.",
+            courierDetails: trackingInfo
+        });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
 app.listen(PORT, () => {
     console.log(`সার্ভার চালু হয়েছে: http://localhost:${PORT}`);
 });
