@@ -147,7 +147,6 @@ app.get('/api/admin/dashboard', (req, res) => {
 // 🚀 লাইভ কাস্টমার অ্যাক্টিভিটি ট্র্যাকিং সিস্টেম
 // ==========================================
 
-let liveStats = { totalLikes: 0, totalComments: 0, totalOrders: 0, orderLogs: [] };
 
 app.post('/api/like', (req, res) => {
     liveStats.totalLikes += 1;
@@ -242,3 +241,5 @@ app.get('/api/admin/dashboard', (req, res) => {
         recentOrders: liveStats.orderLogs
     });
 });
+
+
