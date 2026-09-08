@@ -331,6 +331,77 @@ app.post('/api/marketing/auto-launch', async (req, res) => {
         res.status(500).json({ error: err.message });
     }
 });
+
+// ==========================================
+// 📦 মডিউল ৩ - গ্লোবাল লজিস্টিকস ও স্বয়ংক্রিয় ট্র্যাকিং ইঞ্জিন
+// ==========================================
+
+// ডাটাবেজে গ্লোবাল শিপিং ও ট্র্যাকিং হিসেব রাখার মডেল
+const LogisticsTrackerSchema = new mongoose.Schema({
+    orderId: String,
+    customerCountry: String,
+    courierPartner: String,      // DHL / FedEx / Aramex
+    trackingNumber: String,      // স্বয়ংক্রিয় ট্র্যাকিং আইডি
+    customsDutyFee: Number,     // কাস্টম ট্যাক্স (USD)
+    estimatedDeliveryDays: Number,
+    logisticsStatus: { type: String, default: 'Pending' },
+    updatedAt: { type: Date, default: Date.now }
+});
+const LogisticsTracker = mongoose.model('LogisticsTracker', LogisticsTrackerSchema);
+
+// অর্ডার প্রসেস হওয়ার পর লজিস্টিকস ও ট্র্যাকিং আইডি জেনারেট করার এপিআই
+app.post('/api/logistics/track-shipment', async (req, res) => {
+    try {
+        const { orderId } = req.body;
+        const orderDetails = await Order.findOne({ orderId: orderId });
+        
+        if (!orderDetails) {
+            return res.status(404).json({ success: false, message: "Order not found for Logistics Tracking" });
+        }
+
+        // দেশ অনুযায়ী লজিস্টিকস ক্যারিয়ার এবং ডেমো কাস্টম ট্যাক্স সেট করা
+        const country = orderDetails.customerCountry || 'US';
+        let courier = 'DHL Express';
+        let customsTax = 5.00; // ডিফল্ট $৫ কাস্টম ট্যাক্স
+        let deliveryDays = 7;
+
+        if (country === 'BD' || country === 'IN') {
+            courier = 'Aramex / Local Hub';
+            customsTax = 2.50;
+            deliveryDays = 5;
+        } else if (country === 'US' || country === 'GB') {
+            courier = 'FedEx International';
+            customsTax = 10.00;
+            deliveryDays = 4;
+        }
+
+        const newLogistics = new LogisticsTracker({
+            orderId: orderDetails.orderId,
+            customerCountry: country,
+            courierPartner: courier,
+            trackingNumber: `NUR-TRK-${Math.floor(10000000 + Math.random() * 90000000)}`,
+            customsDutyFee: customsTax,
+            estimatedDeliveryDays: deliveryDays,
+            logisticsStatus: 'Shipped_International_Hub'
+        });
+
+        await newLogistics.save();
+
+        console.log(`📦 [GLOBAL LOGISTICS ENGINE ACTIVATED]!!`);
+        console.log(`   📦 অর্ডার আইডি: ${newLogistics.orderId}`);
+        console.log(`   🚚 কুরিয়ার পার্টনার: ${newLogistics.courierPartner}`);
+        console.log(`   🎫 ট্র্যাকিং নম্বর: ${newLogistics.trackingNumber}`);
+        console.log(`   🛃 কাস্টম ডিউটি ট্যাক্স: $${newLogistics.customsDutyFee} USD`);
+
+        res.json({
+            success: true,
+            message: "Global Logistics tracking initiated successfully.",
+            logisticsDetails: newLogistics
+        });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
 app.listen(PORT, () => {
     console.log(`সার্ভার চালু হয়েছে: http://localhost:${PORT}`);
 });
