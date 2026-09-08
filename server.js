@@ -601,6 +601,63 @@ app.post('/api/taxation/calculate', async (req, res) => {
         res.status(500).json({ error: err.message });
     }
 });
+
+// ==========================================
+// 💬 মডিউল ১১ - কাস্টমার লাইভ চ্যাট ও সাপোর্ট অটোমেশন ইঞ্জিন
+// ==========================================
+
+// ডাটাবেজে কাস্টমার চ্যাট ও সাপোর্ট টিকিট হিসেব রাখার মডেল
+const SupportTicketSchema = new mongoose.Schema({
+    ticketId: String,
+    customerName: String,
+    messageSubject: String,
+    chatLogs: [String],         // মেসেজের ইতিহাস
+    ticketStatus: { type: String, default: 'Open' },
+    aiBotResponse: String,      // AI স্বয়ংক্রিয় উত্তর
+    createdAt: { type: Date, default: Date.now }
+});
+const SupportTicket = mongoose.model('SupportTicket', SupportTicketSchema);
+
+// কাস্টমার সাপোর্ট মেসেজ বা চ্যাট সাবমিট করার এপিআই
+app.post('/api/support/chat-submit', async (req, res) => {
+    try {
+        const { customerName, message } = req.body;
+        
+        // এআই ভিত্তিক স্বয়ংক্রিয় চ্যাট বট রেসপন্স লজিক বেস
+        const aiReplies = [
+            "Hello! Thank you for contacting NUR GLOBAL STORE. Our AI logistics engine is processing your query. We will update you shortly.",
+            "Greetings! If you are inquiring about your order tracking, please check the Logistics Module. How else can I assist you today?",
+            "Thank you for reaching out. Your support ticket has been logged into our secure MongoDB Atlas engine. An agent is reviewing it."
+        ];
+        
+        const randomReply = aiReplies[Math.floor(Math.random() * aiReplies.length)];
+
+        const newTicket = new SupportTicket({
+            ticketId: `NUR-TKT-${Math.floor(10000 + Math.random() * 90000)}`,
+            customerName: customerName || 'Anonymous Buyer',
+            messageSubject: message || 'General Inquiry',
+            chatLogs: [message],
+            aiBotResponse: randomReply,
+            ticketStatus: 'AI_Responded'
+        });
+
+        await newTicket.save();
+
+        console.log(`💬 [AI CUSTOMER SUPPORT ENGINE ACTIVATED]!!`);
+        console.log(`   🎫 টিকিট আইডি: ${newTicket.ticketId}`);
+        console.log(`   👤 কাস্টমার: ${newTicket.customerName}`);
+        console.log(`   📝 কাস্টমার মেসেজ: "${message}"`);
+        console.log(`   🤖 AI অটো-রিপ্লাই: "${newTicket.aiBotResponse}"`);
+
+        res.json({
+            success: true,
+            message: "Support ticket logged and AI response triggered successfully.",
+            ticketDetails: newTicket
+        });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
 app.listen(PORT, () => {
     console.log(`সার্ভার চালু হয়েছে: http://localhost:${PORT}`);
 });
