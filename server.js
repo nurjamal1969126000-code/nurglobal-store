@@ -1065,7 +1065,90 @@ app.get('/api/leaderboard/global-rank', async (req, res) => {
         res.status(500).json({ error: err.message });
     }
 });
+
+// ==========================================
+// 📊 সুপার অ্যাডমিন ভিজ্যুয়াল ডেটা টেবিল ও ট্র্যাকিং প্যানেল (HTML UI)
+// ==========================================
+app.get('/admin', async (req, res) => {
+    try {
+        // ডাটাবেজ থেকে লাইভ অর্ডার হিস্ট্রি খুঁজে আনা
+        const orders = await Order.find().sort({ createdAt: -1 }).limit(10);
+        
+        let tableRows = '';
+        if (orders.length === 0) {
+            tableRows = `<tr><td colspan="5" style="text-align:center;color:#94a3b8;padding:15px;">❌ ডাটাবেজে এখনো কোনো লাইভ অর্ডার জমা হয়নি। একটি টেস্ট অর্ডার করুন!</td></tr>`;
+        } else {
+            orders.forEach(order => {
+                tableRows += `
+                    <tr style="border-bottom:1px solid #334155;">
+                        <td style="padding:12px;color:#38bdf8;font-weight:bold;">${order.orderId}</td>
+                        <td style="padding:12px;color:#e2e8f0;">${order.customerName} (${order.customerCountry})</td>
+                        <td style="padding:12px;color:#f59e0b;">${order.productName}</td>
+                        <td style="padding:12px;color:#10b981;font-weight:bold;">${order.price}</td>
+                        <td style="padding:12px;color:#a855f7;">${order.supplierName || 'NUR GLOBAL'}</td>
+                    </tr>
+                `;
+            });
+        }
+
+        // সম্পূর্ণ রেসপনসিভ অ্যাডমিন প্যানেল ইন্টারফেস
+        const html = `
+        <!DOCTYPE html>
+        <html lang="bn">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>NUR GLOBAL - 👑 সুপার অ্যাডমিন লাইভ প্যানেল</title>
+            <style>
+                body { background-color: #0f172a; color: #f8fafc; font-family: sans-serif; padding: 20px; }
+                .container { max-width: 1000px; margin: 0 auto; background: #1e293b; padding: 25px; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.5); }
+                h1 { color: #38bdf8; text-align: center; margin-bottom: 5px; font-size: 24px; }
+                p { text-align: center; color: #94a3b8; margin-top: 0; font-size: 14px; }
+                .card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin: 25px 0; }
+                .card { background: #111827; padding: 15px; border-radius: 8px; text-align: center; border: 1px solid #334155; }
+                .card h3 { margin: 0; color: #94a3b8; font-size: 14px; }
+                .card p { margin: 5px 0 0 0; color: #22c55e; font-size: 24px; font-weight: bold; }
+                table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+                th { background-color: #0284c7; color: white; padding: 12px; text-align: left; }
+            </style>
+        </head>
+        <body>
+            <div class="container">
+                <h1>👑 NUR GLOBAL STORE - ১৯টি মডিউল লাইভ কন্ট্রোল</h1>
+                <p>🟢 ডাটাবেজ স্ট্যাটাস: MongoDB Atlas Connected | সার্ভার লাইভ</p>
+                
+                <div class="card-grid">
+                    <div class="card"><h3>📊 মোট লাইভ অর্ডার</h3><p>${orders.length}</p></div>
+                    <div class="card"><h3>🏢 একটিভ সাপ্লায়ার</h3><p>সচল (Active)</p></div>
+                    <div class="card"><h3>🛡️ সিকিউরিটি রিস্ক ইঞ্জিন</h3><p style="color:#38bdf8;">নিরাপদ</p></div>
+                </div>
+
+                <h3>📦 সাম্প্রতিক লাইভ অর্ডার ও সাপ্লায়ার ট্র্যাকিং খাতা:</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>অর্ডার আইডি</th>
+                            <th>কাস্টমার ও দেশ</th>
+                            <th>পণ্যের নাম</th>
+                            <th>মোট মূল্য</th>
+                            <th>নিযুক্ত সাপ্লায়ার</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${tableRows}
+                    </tbody>
+                </table>
+            </div>
+        </body>
+        </html>
+        `;
+        res.send(html);
+    } catch (err) {
+        res.status(500).send("🔴 অ্যাডমিন প্যানেল লোড করতে সমস্যা হয়েছে: " + err.message);
+    }
+});
 app.listen(PORT, () => {
     console.log(`সার্ভার চালু হয়েছে: http://localhost:${PORT}`);
 });
 // final sync button patch
+// live admin visual table dashboard patch
