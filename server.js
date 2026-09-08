@@ -941,6 +941,85 @@ app.post('/api/kyc/verify', async (req, res) => {
         res.status(500).json({ error: err.message });
     }
 });
+
+// ==========================================
+// 💳 মডিউল ১৮ - স্বয়ংক্রিয় গ্লোবাল পে-আউট ও সাপ্লায়ার ওয়ালেট ইঞ্জিন
+// ==========================================
+
+// ডাটাবেজে সাপ্লায়ার ওয়ালেট ব্যালেন্স ও পে-আউট হিসেব রাখার মডেল
+const SupplierWalletSchema = new mongoose.Schema({
+    supplierId: String,
+    supplierCompany: String,
+    availableBalance: { type: Number, default: 0 }, // উত্তোলনের যোগ্য ব্যালেন্স
+    pendingBalance: { type: Number, default: 0 },   // প্রক্রিয়াদীন ব্যালেন্স
+    currency: { type: String, default: 'USD' },
+    payoutHistory: [
+        {
+            payoutId: String,
+            amount: Number,
+            method: String, // Bank, Wise, PayPal
+            status: String, // Paid, Processing
+            requestedAt: { type: Date, default: Date.now }
+        }
+    ],
+    lastUpdated: { type: Date, default: Date.now }
+});
+const SupplierWallet = mongoose.model('SupplierWallet', SupplierWalletSchema);
+
+// সাপ্লায়ারদের গ্লোবাল পে-আউট রিকোয়েস্ট এবং ওয়ালেট ব্যালেন্স আপডেট করার এপিআই
+app.post('/api/wallet/payout-request', async (req, res) => {
+    try {
+        const { supplierId, requestedAmount, payoutMethod } = req.body;
+        
+        let wallet = await SupplierWallet.findOne({ supplierId: supplierId });
+        
+        // ডেমো ডেটাবেজ সেফটি নেট
+        if (!wallet) {
+            wallet = new SupplierWallet({
+                supplierId: supplierId || 'SUP_GLOBAL_99',
+                supplierCompany: 'Global Partner Logistics',
+                availableBalance: 5000.00, // ডেমো ব্যালেন্স $৫০০০
+                pendingBalance: 1200.00
+            });
+        }
+
+        const amtToWithdraw = parseFloat(requestedAmount) || 500.00;
+        const methodUsed = payoutMethod || 'Wise Transfer';
+
+        // পর্যাপ্ত ব্যালেন্স থাকলে পে-আউট প্রসেস করার নোড লজিক
+        if (wallet.availableBalance < amtToWithdraw) {
+            return res.status(400).json({ success: false, message: "Insufficient available balance for payout" });
+        }
+
+        // ব্যালেন্স মাইনাস করা এবং হিস্ট্রিতে যোগ করা
+        wallet.availableBalance -= amtToWithdraw;
+        const newPayoutId = `NUR-PAY-${Math.floor(100000 + Math.random() * 900000)}`;
+        
+        wallet.payoutHistory.push({
+            payoutId: newPayoutId,
+            amount: amtToWithdraw,
+            method: methodUsed,
+            status: 'Processing'
+        });
+
+        wallet.lastUpdated = new Date();
+        await wallet.save();
+
+        console.log(`💸 [SUPPLIER GLOBAL PAYOUT ENGINE ACTIVATED]!!`);
+        console.log(`   🏢 সাপ্লায়ার: ${wallet.supplierCompany}`);
+        console.log(`   🎫 পে-আউট আইডি: ${newPayoutId}`);
+        console.log(`   💵 উত্তোলনের পরিমাণ: $${amtToWithdraw} USD via ${methodUsed}`);
+        console.log(`   🏦 অবশিষ্ট ব্যালেন্স: $${wallet.availableBalance} USD`);
+
+        res.json({
+            success: true,
+            message: "Global supplier payout request registered and wallet updated.",
+            walletDetails: wallet
+        });
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
 app.listen(PORT, () => {
     console.log(`সার্ভার চালু হয়েছে: http://localhost:${PORT}`);
 });
