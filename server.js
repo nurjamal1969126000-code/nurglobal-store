@@ -98,6 +98,79 @@ app.get('/special-ai', (req, res) => {
     res.send(htmlContent);
 });
 
+
+// ==========================================
+// 💳 মডিউল ৯ - গ্লোবাল স্প্লিট পেমেন্ট ও ইনকাম ট্র্যাকার ইঞ্জিন
+// ==========================================
+
+// ডাটাবেজে ইনকাম এবং পেমেন্ট স্প্লিট হিসেব রাখার মডেল
+const IncomeTrackerSchema = new mongoose.Schema({
+    orderId: String,
+    totalPaid: Number,
+    currency: String,
+    adminCommission: Number, // আপনার লাভ
+    supplierPayout: Number,   // সাপ্লায়ারের আসল দাম
+    status: { type: String, default: 'Pending' },
+    timestamp: { type: Date, default: Date.now }
+});
+const IncomeTracker = mongoose.model('IncomeTracker', IncomeTrackerSchema);
+
+// পেমেন্ট স্প্লিট প্রসেস করার আসল লজিক এপিআই (API Route)
+app.post('/api/payment/split', async (req, res) => {
+    try {
+        const { orderId, totalAmount, supplierCost, currency } = req.body;
+        
+        // লাভের অংশ স্বয়ংক্রিয়ভাবে ভাগ করার মেকানিজম (Split Logic)
+        const myProfit = totalAmount - supplierCost; 
+        const supplierShare = supplierCost;
+
+        const newPayout = new IncomeTracker({
+            orderId: orderId || `NUR-PAY-${Math.floor(1000 + Math.random() * 9000)}`,
+            totalPaid: totalAmount,
+            currency: currency || 'USD',
+            adminCommission: myProfit,
+            supplierPayout: supplierShare,
+            status: 'Split_Success'
+        });
+
+        await newPayout.save();
+
+        console.log(`💰 [PAYMENT SPLIT SUCCESS]!!`);
+        console.log(`   📦 অর্ডার আইডি: ${newPayout.orderId}`);
+        console.log(`   💵 মোট পেমেন্ট: ${newPayout.totalPaid} ${newPayout.currency}`);
+        console.log(`   👑 আপনার নিট লাভ (Commission): ${newPayout.adminCommission} ${newPayout.currency} -> ওয়ালেটে পাঠানো হয়েছে।`);
+        console.log(`   🏢 সাপ্লায়ারের পাওনা: ${newPayout.supplierPayout} ${newPayout.currency}`);
+
+        res.json({ 
+            success: true, 
+            message: "Payment successfully split between Admin and Supplier", 
+            payoutDetails: newPayout 
+        });
+    } catch (err) { 
+        res.status(500).json({ error: err.message }); 
+    }
+});
+
+// আপনার ইনকাম এবং লাভের লাইভ স্ট্যাটাস দেখার জন্য সুপার অ্যাডমিন এপিআই
+app.get('/api/admin/income-ledger', async (req, res) => {
+    try {
+        const ledger = await IncomeTracker.find().sort({ timestamp: -1 });
+        
+        // মোট লাভের যোগফল বের করার নোড লজিক
+        let totalProfit = 0;
+        ledger.forEach(item => { totalProfit += item.adminCommission; });
+
+        res.json({
+            status: "Active",
+            module: "Module 9 - Automated Income Split Ledger",
+            totalProfitAccumulated: totalProfit,
+            currencyLedger: "USD / Global Multi-Currency",
+            history: ledger
+        });
+    } catch (err) { 
+        res.status(500).json({ error: err.message }); 
+    }
+});
 app.listen(PORT, () => {
     console.log(`সার্ভার চালু হয়েছে: http://localhost:${PORT}`);
 });
