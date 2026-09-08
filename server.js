@@ -1068,3 +1068,4 @@ app.get('/api/leaderboard/global-rank', async (req, res) => {
 app.listen(PORT, () => {
     console.log(`সার্ভার চালু হয়েছে: http://localhost:${PORT}`);
 });
+// final sync button patch
