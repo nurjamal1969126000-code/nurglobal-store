@@ -1,3 +1,4 @@
+
 const express = require('express');
 const app = express();
 const PORT = 3000;
@@ -92,4 +93,152 @@ app.get('/special-ai', (req, res) => {
 
 app.listen(PORT, () => {
     console.log(`সার্ভার চালু হয়েছে: http://localhost:${PORT}`);
+});
+// ==========================================
+// 🚀 লাইভ কাস্টমার অ্যাক্টিভিটি ট্র্যাকিং সিস্টেম
+// ==========================================
+
+let liveStats = { totalLikes: 0, totalComments: 0, totalOrders: 0, orderLogs: [] };
+
+app.post('/api/like', (req, res) => {
+    liveStats.totalLikes += 1;
+    console.log(`🟢 [LIVE EVENT] একজন কাস্টমার লাইক দিয়েছেন! মোট লাইক: ${liveStats.totalLikes}`);
+    res.json({ success: true, totalLikes: liveStats.totalLikes });
+});
+
+app.post('/api/comment', express.json(), (req, res) => {
+    const commentText = req.body.comment || "No comment text";
+    liveStats.totalComments += 1;
+    console.log(`💬 [LIVE EVENT] নতুন কমেন্ট এসেছে: "${commentText}" | মোট কমেন্ট: ${liveStats.totalComments}`);
+    res.json({ success: true, totalComments: liveStats.totalComments });
+});
+
+app.post('/api/order', express.json(), (req, res) => {
+    const { customerName, customerCountry, productName, supplierName, price } = req.body;
+    const newOrder = {
+        orderId: `NUR-${Math.floor(1000 + Math.random() * 9000)}`,
+        customerName: customerName || "Unknown Customer",
+        customerCountry: customerCountry || "Unknown Country",
+        productName: productName || "Unknown Product",
+        supplierName: supplierName || "Unknown Supplier",
+        price: price || "0",
+        timestamp: new Date().toISOString()
+    };
+    liveStats.totalOrders += 1;
+    liveStats.orderLogs.push(newOrder);
+    
+    console.log(`🚨 [LIVE ORDER DETECTED]!!`);
+    console.log(`   📦 অর্ডার আইডি: ${newOrder.orderId}`);
+    console.log(`   👤 কাস্টমার: ${newOrder.customerName} (${newOrder.customerCountry})`);
+    console.log(`   🛒 প্রোডাক্ট: ${newOrder.productName} -> সাপ্লায়ার: ${newOrder.supplierName}`);
+    console.log(`   💰 পেমেন্ট: ${newOrder.price}`);
+    res.json({ success: true, message: "Order Tracked Successfully", orderDetails: newOrder });
+});
+
+app.get('/api/admin/dashboard', (req, res) => {
+    res.json({
+        status: "Running",
+        message: "NUR GLOBAL STORE - Live Control Panel Data",
+        stats: { likes: liveStats.totalLikes, comments: liveStats.totalComments, orders: liveStats.totalOrders },
+        recentOrders: liveStats.orderLogs
+    });
+});
+// ==========================================
+// 🚀 লাইভ কাস্টমার অ্যাক্টিভিটি ট্র্যাকিং সিস্টেম
+// ==========================================
+
+let liveStats = { totalLikes: 0, totalComments: 0, totalOrders: 0, orderLogs: [] };
+
+app.post('/api/like', (req, res) => {
+    liveStats.totalLikes += 1;
+    console.log(`🟢 [LIVE EVENT] একজন কাস্টমার লাইক দিয়েছেন! মোট লাইক: ${liveStats.totalLikes}`);
+    res.json({ success: true, totalLikes: liveStats.totalLikes });
+});
+
+app.post('/api/comment', express.json(), (req, res) => {
+    const commentText = req.body.comment || "No comment text";
+    liveStats.totalComments += 1;
+    console.log(`💬 [LIVE EVENT] নতুন কমেন্ট এসেছে: "${commentText}" | মোট কমেন্ট: ${liveStats.totalComments}`);
+    res.json({ success: true, totalComments: liveStats.totalComments });
+});
+
+app.post('/api/order', express.json(), (req, res) => {
+    const { customerName, customerCountry, productName, supplierName, price } = req.body;
+    const newOrder = {
+        orderId: `NUR-${Math.floor(1000 + Math.random() * 9000)}`,
+        customerName: customerName || "Unknown Customer",
+        customerCountry: customerCountry || "Unknown Country",
+        productName: productName || "Unknown Product",
+        supplierName: supplierName || "Unknown Supplier",
+        price: price || "0",
+        timestamp: new Date().toISOString()
+    };
+    liveStats.totalOrders += 1;
+    liveStats.orderLogs.push(newOrder);
+    
+    console.log(`🚨 [LIVE ORDER DETECTED]!!`);
+    console.log(`   📦 অর্ডার আইডি: ${newOrder.orderId}`);
+    console.log(`   👤 কাস্টমার: ${newOrder.customerName} (${newOrder.customerCountry})`);
+    console.log(`   🛒 প্রোডাক্ট: ${newOrder.productName} -> সাপ্লায়ার: ${newOrder.supplierName}`);
+    console.log(`   💰 পেমেন্ট: ${newOrder.price}`);
+    res.json({ success: true, message: "Order Tracked Successfully", orderDetails: newOrder });
+});
+
+app.get('/api/admin/dashboard', (req, res) => {
+    res.json({
+        status: "Running",
+        message: "NUR GLOBAL STORE - Live Control Panel Data",
+        stats: { likes: liveStats.totalLikes, comments: liveStats.totalComments, orders: liveStats.totalOrders },
+        recentOrders: liveStats.orderLogs
+    });
+});
+
+// ==========================================
+// 🚀 লাইভ কাস্টমার অ্যাক্টিভিটি ট্র্যাকিং সিস্টেম
+// ==========================================
+
+let liveStats = { totalLikes: 0, totalComments: 0, totalOrders: 0, orderLogs: [] };
+
+app.post('/api/like', (req, res) => {
+    liveStats.totalLikes += 1;
+    console.log(`🟢 [LIVE EVENT] একজন কাস্টমার লাইক দিয়েছেন! মোট লাইক: ${liveStats.totalLikes}`);
+    res.json({ success: true, totalLikes: liveStats.totalLikes });
+});
+
+app.post('/api/comment', express.json(), (req, res) => {
+    const commentText = req.body.comment || "No comment text";
+    liveStats.totalComments += 1;
+    console.log(`💬 [LIVE EVENT] নতুন কমেন্ট এসেছে: "${commentText}" | মোট কমেন্ট: ${liveStats.totalComments}`);
+    res.json({ success: true, totalComments: liveStats.totalComments });
+});
+
+app.post('/api/order', express.json(), (req, res) => {
+    const { customerName, customerCountry, productName, supplierName, price } = req.body;
+    const newOrder = {
+        orderId: `NUR-${Math.floor(1000 + Math.random() * 9000)}`,
+        customerName: customerName || "Unknown Customer",
+        customerCountry: customerCountry || "Unknown Country",
+        productName: productName || "Unknown Product",
+        supplierName: supplierName || "Unknown Supplier",
+        price: price || "0",
+        timestamp: new Date().toISOString()
+    };
+    liveStats.totalOrders += 1;
+    liveStats.orderLogs.push(newOrder);
+    
+    console.log(`🚨 [LIVE ORDER DETECTED]!!`);
+    console.log(`   📦 অর্ডার আইডি: ${newOrder.orderId}`);
+    console.log(`   👤 কাস্টমার: ${newOrder.customerName} (${newOrder.customerCountry})`);
+    console.log(`   🛒 প্রোডাক্ট: ${newOrder.productName} -> সাপ্লায়ার: ${newOrder.supplierName}`);
+    console.log(`   💰 পেমেন্ট: ${newOrder.price}`);
+    res.json({ success: true, message: "Order Tracked Successfully", orderDetails: newOrder });
+});
+
+app.get('/api/admin/dashboard', (req, res) => {
+    res.json({
+        status: "Running",
+        message: "NUR GLOBAL STORE - Live Control Panel Data",
+        stats: { likes: liveStats.totalLikes, comments: liveStats.totalComments, orders: liveStats.totalOrders },
+        recentOrders: liveStats.orderLogs
+    });
 });
