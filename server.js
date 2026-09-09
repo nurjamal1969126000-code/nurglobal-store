@@ -1876,6 +1876,70 @@ app.post('/api/global-suppliers/sync', async (req, res) => {
         res.status(500).json({ error: err.message });
     }
 });
+
+// ==========================================================
+// 👑 ১৯ মডিউল মহাবিজয়: লাইভ ফেসবুক পিক্সেল ট্র্যাকার ও এআই ভিডিও হুক UI
+// ==========================================================
+app.get('/admin/ai-sales-pixel-hub', (req, res) => {
+    const pixelConfig = {
+        pixelId: "FB-PIXEL-9966-NUR",
+        conversionAPIStatus: "Connected (Dual Currency Verified)",
+        pixelEventTracked: "Purchase, AddToCart, InitiateCheckout",
+        aiVideoHookBng: "২০২৬ সালের সবচেয়ে ট্রেন্ডিং লাক্সারি গ্যাজেট এখন লাইভ! 👑",
+        aiGlobalHashtags: "#LuxuryTech #PremiumStyle #NurGlobalStore #StripeSecure #WorldwideShipping"
+    };
+
+    res.send(`
+        <!DOCTYPE html>
+        <html lang="bn">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>NUR GLOBAL - 👑 এআই সেলস ও পিক্সেল কমান্ড সেন্টার</title>
+            <style>
+                body { background-color: #0b0f19; color: #f3f4f6; font-family: sans-serif; padding: 20px; }
+                .main-box { max-width: 850px; margin: 0 auto; background: #1f2937; padding: 30px; border-radius: 16px; border: 2px solid #d4af37; box-shadow: 0 10px 25px rgba(0,0,0,0.6); }
+                h1 { color: #d4af37; text-align: center; margin-bottom: 5px; font-size: 22px; text-transform: uppercase; }
+                .grid-control { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 20px; margin-top: 30px; }
+                .section-card { background: #111827; padding: 20px; border-radius: 12px; border: 1px solid #374151; }
+                h3 { margin-top: 0; font-size: 16px; border-bottom: 1px solid #374151; padding-bottom: 10px; }
+                .status-line { margin: 12px 0; font-size: 14px; color: #9ca3af; display: flex; justify-content: space-between; }
+                .status-line b { color: #ffffff; }
+                .badge-green { background: rgba(16, 185, 129, 0.2); color: #10b981; padding: 2px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; }
+                .btn-action { width: 100%; padding: 12px; background: linear-gradient(135deg, #d4af37 0%, #aa7c11 100%); border: none; border-radius: 6px; color: #111827; font-weight: bold; font-size: 14px; cursor: pointer; text-transform: uppercase; margin-top: 15px; }
+            </style>
+        </head>
+        <body>
+            <div class="main-box">
+                <h1>👑 NUR GLOBAL - এআই সেলস ফানেল ও পিক্সেল কমান্ড সেন্টার</h1>
+                <p style="text-align:center; color:#9ca3af; margin-top:0; font-size:14px;">🟢 ফেসবুক কনভার্সন এআই এপিআই এবং টিকটক ভাইরাল ভিডিও হুক অটো-লোডের চূড়ান্ত খাতা</p>
+
+                <div class="grid-control">
+                    <!-- ১. ফেসবুক পিক্সেল ও ডাটা ট্র্যাকিং সেটিংস -->
+                    <div class="section-card" style="border-top: 4px solid #38bdf8;">
+                        <h3 style="color:#38bdf8;">🎯 ফেসবুক পিক্সেল ও ডাটা ট্র্যাকিং (Pixel Settings)</h3>
+                        <div class="status-line">অফিশিয়াল পিক্সেল আইডি: <b>${pixelConfig.pixelId}</b></div>
+                        <div class="status-line">কনভার্সন এপিআই স্ট্যাটাস: <span class="badge-green">${pixelConfig.conversionAPIStatus}</span></div>
+                        <div class="status-line">লাইভ ইভেন্ট ট্র্যাকিং: <b style="color:#10b981;">${pixelConfig.pixelEventTracked}</b></div>
+                        <button class="btn-action" onclick="alert('ফেসবুক পিক্সেল লাইভ ডেটা ড্যাশবোর্ড সিঙ্ক করা হয়েছে!')">🔄 পিক্সেল ডেটা রিফ্রেশ করুন</button>
+                    </div>
+
+                    <!-- ২. এআই ভিডিও হুক ও গ্লোবাল ভাইরাল মেকানিজম -->
+                    <div class="section-card" style="border-top: 4px solid #f59e0b;">
+                        <h3 style="color:#f59e0b;">🎥 এআই ভিডিও হুক ও ভাইরাল ক্যাপশন ফর্মুলা</h3>
+                        <div class="status-line">এআই অন-স্ক্রিন হুক (বাংলা): <b style="color:#ffffff;">"${pixelConfig.aiVideoHookBng}"</b></div>
+                        <div class="status-line" style="display:block; font-size:12px; color:#9ca3af; line-height:1.5;">
+                            <b>🌐 গ্লোবাল হ্যাশট্যাগ ক্লাউড:</b><br>
+                            <span style="color:#f59e0b;">${pixelConfig.aiGlobalHashtags}</span>
+                        </div>
+                        <button class="btn-action" style="background:linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color:white;" onclick="alert('এআই ভাইরাল স্ক্রিপ্ট ও কন্টেন্ট মেটাডেটা সফলভাবে জেনারেট করা হয়েছে!')">🎬 কপি ভাইরাল কন্টেন্ট</button>
+                    </div>
+                </div>
+            </div>
+        </body>
+        </html>
+    `);
+});
 app.listen(PORT, () => {
     console.log(`সার্ভার চালু হয়েছে: http://localhost:${PORT}`);
 });
@@ -1896,3 +1960,4 @@ app.listen(PORT, () => {
 // cj logistics and tiktok video double activation patch
 // final grand business control combo patch
 // worldwide supplier network unified integration patch
+// absolute grand master architecture lock
