@@ -1458,6 +1458,102 @@ app.get('/api/cj/test-sync', async (req, res) => {
         res.status(500).send("🔴 সিজে সিঙ্ক টেস্টে সমস্যা হয়েছে: " + err.message);
     }
 });
+
+// ==========================================
+// 👑 প্রিমিয়াম ডার্ক গোল্ডেন ই-কমার্স থিম UI (Main Homepage Layout)
+// ==========================================
+app.get('/', async (req, res) => {
+    try {
+        // ডেমো টপ সেলিং সিজে প্রোডাক্ট লিস্ট আর্কিটেকচার
+        const featuredProducts = [
+            { id: "1", name: "NUR-GLOBAL Luxury Pro Wireless Earbuds", price: "$49.99", oldPrice: "$89.99", img: "🎧", badge: "Hot Selling" },
+            { id: "2", name: "Minimalist Gold Accent Smart Watch", price: "$129.99", oldPrice: "$199.99", img: "⌚", badge: "Premium" },
+            { id: "3", name: "AI Powered Eco Smart Home Hub", price: "$79.99", oldPrice: "$149.99", img: "🔮", badge: "New AI" }
+        ];
+
+        const html = `
+        <!DOCTYPE html>
+        <html lang="bn">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>NUR GLOBAL STORE - Premium Luxury Dropshipping</title>
+            <style>
+                body { background-color: #0b0f17; color: #f3f4f6; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 0; }
+                header { background: #111827; border-bottom: 2px solid #d4af37; padding: 20px; text-align: center; box-shadow: 0 4px 20px rgba(0,0,0,0.5); }
+                header h1 { margin: 0; color: #d4af37; font-size: 28px; letter-spacing: 2px; text-transform: uppercase; font-weight: 800; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
+                header p { margin: 5px 0 0 0; color: #9ca3af; font-size: 13px; letter-spacing: 1px; }
+                .hero-section { background: linear-gradient(135deg, #111827 0%, #1e1b4b 100%); padding: 50px 20px; text-align: center; border-bottom: 1px solid #1f2937; }
+                .hero-title { font-size: 32px; color: #ffffff; margin-bottom: 10px; font-weight: bold; }
+                .hero-title span { color: #d4af37; }
+                .hero-subtitle { color: #9ca3af; font-size: 15px; max-width: 600px; margin: 0 auto 25px auto; line-height: 1.6; }
+                .control-panel { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; margin-bottom: 10px; }
+                .btn-nav { padding: 10px 20px; background: #1f2937; border: 1px solid #d4af37; border-radius: 6px; color: #d4af37; text-decoration: none; font-size: 13px; font-weight: 600; transition: 0.3s; }
+                .btn-nav:hover { background: #d4af37; color: #111827; box-shadow: 0 0 15px rgba(212,175,55,0.4); }
+                .container { max-width: 1200px; margin: 40px auto; padding: 0 20px; }
+                .section-title { font-size: 22px; color: #d4af37; margin-bottom: 25px; text-transform: uppercase; letter-spacing: 1px; border-left: 4px solid #d4af37; padding-left: 10px; }
+                .product-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 25px; }
+                .product-card { background: #111827; border: 1px solid #1f2937; border-radius: 12px; padding: 20px; text-align: center; transition: 0.3s; position: relative; overflow: hidden; }
+                .product-card:hover { border-color: #d4af37; transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.6); }
+                .badge { position: absolute; top: 12px; left: 12px; background: #d4af37; color: #111827; padding: 4px 10px; font-size: 11px; font-weight: bold; border-radius: 4px; text-transform: uppercase; }
+                .product-img { font-size: 70px; margin: 20px 0; display: block; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.5)); }
+                .product-name { font-size: 16px; color: #ffffff; margin: 10px 0; font-weight: 600; line-height: 1.4; height: 44px; overflow: hidden; }
+                .price-box { margin: 15px 0; display: flex; justify-content: center; align-items: center; gap: 10px; }
+                .current-price { color: #10b981; font-size: 20px; font-weight: bold; }
+                .old-price { color: #6b7280; text-decoration: line-through; font-size: 14px; }
+                .btn-buy { width: 100%; padding: 12px; background: linear-gradient(135deg, #d4af37 0%, #aa7c11 100%); border: none; border-radius: 6px; color: #111827; font-weight: bold; font-size: 14px; cursor: pointer; transition: 0.2s; text-transform: uppercase; letter-spacing: 0.5px; }
+                .btn-buy:hover { filter: brightness(1.2); box-shadow: 0 4px 12px rgba(212,175,55,0.3); }
+                footer { text-align: center; padding: 30px; color: #4b5563; font-size: 12px; border-top: 1px solid #1f2937; margin-top: 5px; }
+            </style>
+        </head>
+        <body>
+            <header>
+                <h1>👑 NUR GLOBAL STORE</h1>
+                <p>Premium AI-Powered Worldwide Dropshipping Ecosystem</p>
+            </header>
+
+            <div class="hero-section">
+                <div class="hero-title">লাক্সারি ড্রপশিপিংয়ের <span>নতুন যুগ</span></div>
+                <div class="hero-subtitle">CJdropshipping এপিআই নেটওয়ার্ক এবং ১৯টি ক্লাউড মডিউল দ্বারা স্বয়ংক্রিয়ভাবে নিয়ন্ত্রিত একটি প্রিমিয়াম আন্তর্জাতিক মার্কেটপ্লেস। আপনার ডুয়াল কারেন্সি গেটওয়ে লাইভ আছে।</div>
+                
+                <!-- ড্যাশবোর্ডের ভিজ্যুয়াল রুট বাটন প্যানেল -->
+                <div class="control-panel">
+                    <a href="/checkout/payment" class="btn-nav">💳 পেমেন্ট গেটওয়ে UI</a>
+                    <a href="/video-catalog" class="btn-nav">🎬 এআই ভিডিও ক্যাটালগ</a>
+                    <a href="/admin/wallet" class="btn-nav">🏦 এডমিন ব্যাংক ওয়ালেট</a>
+                    <a href="/admin" class="btn-nav">📊 ১৯ মডিউল কন্ট্রোল খাতা</a>
+                </div>
+            </div>
+
+            <div class="container">
+                <div class="section-title">✨ ট্রেন্ডিং গ্লোবাল প্রোডাক্টস (Live Sync)</div>
+                <div class="product-grid">
+                    ${featuredProducts.map(p => `
+                        <div class="product-card">
+                            <span class="badge">${p.badge}</span>
+                            <span class="product-img">${p.img}</span>
+                            <div class="product-name">${p.name}</div>
+                            <div class="price-box">
+                                <span class="current-price">${p.price}</span>
+                                <span class="old-price">${p.oldPrice}</span>
+                            </div>
+                            <button class="btn-buy" onclick="window.location.href='/checkout/payment'">🛒 Buy Now (Secure Checkout)</button>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+
+            <footer>
+                © 2026 NUR GLOBAL STORE | Secured via Stripe & Multi-Node Database Clustering Engine.
+            </footer>
+        </body>
+        </html>
+        `;
+        res.send(html);
+    } catch (err) {
+        res.status(500).send("🔴 ডার্ক গোল্ডেন থিম লোড করতে সমস্যা হয়েছে: " + err.message);
+    }
+});
 app.listen(PORT, () => {
     console.log(`সার্ভার চালু হয়েছে: http://localhost:${PORT}`);
 });
@@ -1470,3 +1566,4 @@ app.listen(PORT, () => {
 // live card checkout user interface patch
 // cjdropshipping session stability patch
 // cj direct verification trigger patch
+// premium dark gold aesthetic template sync
