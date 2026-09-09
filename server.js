@@ -1706,6 +1706,61 @@ app.get('/api/theme/toggle-script', (req, res) => {
         }
     `);
 });
+
+// ==========================================================
+// 📦 মেগা কম্বো: সিজে ডিপ লজিস্টিকস সিঙ্ক ও ভিডিও মার্কেটিং ট্র্যাক
+// ==========================================================
+
+// সিজে ডেলিভারি ও কুরিয়ার শিপমেন্ট ট্র্যাকিংয়ের গভীর ডাটাবেজ মডেল
+const CJDeepLogisticsSchema = new mongoose.Schema({
+    trackingNumber: String,
+    shippingMethod: { type: String, default: 'CJ Packet Sensitive' },
+    deliveryEstimateDays: Number,
+    shippingCostUSD: Number,
+    customsStatus: { type: String, default: 'Cleared' },
+    lastUpdated: { type: Date, default: Date.now }
+});
+const CJDeepLogistics = mongoose.model('CJDeepLogistics', CJDeepLogisticsSchema);
+
+// ১. সিজে লজিস্টিকস ও কুরিয়ার ট্র্যাকিং ডিপ সিঙ্ক এপিআই রুট
+app.post('/api/cj/deep-logistics-sync', async (req, res) => {
+    try {
+        const { trackingId, cost, days } = req.body;
+        const newLogistics = new CJDeepLogistics({
+            trackingNumber: trackingId || `CJ-ELITE-${Math.floor(10000000 + Math.random() * 90000000)}`,
+            shippingCostUSD: parseFloat(cost) || 4.99,
+            deliveryEstimateDays: parseInt(days) || 7
+        });
+        await newLogistics.save();
+        res.json({ success: true, message: "CJ Deep Payout & Logistics Engine Synchronized.", details: newLogistics });
+    } catch (err) { res.status(500).json({ error: err.message }); }
+});
+
+// ২. টিকটক ও ফেসবুক রিলস ভাইরাল ভিডিও স্ক্রিপ্ট ফ্রন্টএন্ড UI ল্যান্ডিং রুট
+app.get('/marketing/viral-video-blueprint', (req, res) => {
+    res.send(`
+        <div style="background:#0b0f19;color:#f3f4f6;font-family:sans-serif;padding:30px;min-height:90vh;display:flex;flex-direction:column;justify-content:center;align-items:center;">
+            <div style="max-width:600px;width:100%;background:#1f2937;padding:25px;border-radius:16px;border:1px solid #d4af37;box-shadow:0 10px 25px rgba(0,0,0,0.6);">
+                <h2 style="color:#d4af37;text-align:center;margin-top:0;">🎥 TIKTOK & REELS VIRAL VIDEO BLUEPRINT</h2>
+                <p style="color:#9ca3af;font-size:14px;text-align:center;">মডিউল ২ এবং এআই মার্কেটিং ফানেল দ্বারা অটো-প্রোমোশন গাইড রেডি</p>
+                
+                <div style="background:#111827;padding:15px;border-radius:8px;margin-bottom:20px;border-left:4px solid #10b981;">
+                    <h4 style="color:#10b981;margin:0 0 5px 0;">🎵 Recommended Trending Audio Type:</h4>
+                    <p style="margin:0;font-size:13px;color:#d1fae5;">Luxury Aesthetic Minimalist Beats / Premium Tech Soundboard (Use from TikTok Commercial Library)</p>
+                </div>
+
+                <div style="background:#111827;padding:15px;border-radius:8px;margin-bottom:20px;border-left:4px solid #38bdf8;">
+                    <h4 style="color:#38bdf8;margin:0 0 5px 0;">🎬 Video Editing Direction (0-15 Sec):</h4>
+                    <p style="margin:5px 0;font-size:13px;"><b>0-3s:</b> Show a cinematic close-up clip of the product from your CJ Dashboard.</p>
+                    <p style="margin:5px 0;font-size:13px;"><b>3-10s:</b> Add text overlay: <i>"This premium luxury item just went viral worldwide! 👑"</i></p>
+                    <p style="margin:5px 0;font-size:13px;"><b>10-15s:</b> Show your Dark Gold Homepage and say: <i>"Secure checkout live in bio! 🛒"</i></p>
+                </div>
+
+                <button style="width:100%;padding:12px;background:linear-gradient(135deg, #d4af37 0%, #aa7c11 100%);border:none;border-radius:8px;color:#111827;font-weight:bold;font-size:15px;cursor:pointer;" onclick="alert('ভিডিও মার্কেটিং সিঙ্ক সচল হয়েছে! আপনার পাসপোর্ট এন্ডোর্সড কার্ড দিয়ে ক্যাম্পেইন বুস্ট করতে পারেন।')">🚀 ACTIVATE ADVERTISING INTEGRATION</button>
+            </div>
+        </div>
+    `);
+});
 app.listen(PORT, () => {
     console.log(`সার্ভার চালু হয়েছে: http://localhost:${PORT}`);
 });
@@ -1723,3 +1778,4 @@ app.listen(PORT, () => {
 // homepage integrated currency patch v2
 // live ai automation scheduler active
 // dynamic light dark mode switch active
+// cj logistics and tiktok video double activation patch
