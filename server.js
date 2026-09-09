@@ -2,6 +2,22 @@ require('dotenv').config();
 const mongoose = require('mongoose');
 
 // 🛡️ MongoDB Atlas ক্লাউড ডাটাবেজ কানেকশন
+
+// ==========================================
+// 🛡️ মেগা অর্ডার মডেল ফিক্স ও ব্যাকএন্ড ডেটা সিঙ্ক
+// ==========================================
+if (!mongoose.models.Order) {
+    const OrderSchema = new mongoose.Schema({
+        customerName: { type: String, default: "Premium Global Buyer" },
+        orderAmountUSD: { type: Number, default: 89.99 },
+        countryCode: { type: String, default: "USA" },
+        orderStatus: { type: String, default: "Processing" },
+        createdAt: { type: Date, default: Date.now }
+    });
+    global.Order = mongoose.model('Order', OrderSchema);
+} else {
+    global.Order = mongoose.models.Order;
+}
 mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/nurglobal')
 .then(() => console.log('🟢 [DATABASE STATUS] MongoDB Atlas ক্লাউড ডাটাবেজ সফলভাবে কানেক্ট হয়েছে!'))
 .catch(err => console.error('🔴 [DATABASE ERROR] ডাটাবেজ কানেকশন ব্যর্থ হয়েছে:', err));
@@ -1961,3 +1977,4 @@ app.listen(PORT, () => {
 // final grand business control combo patch
 // worldwide supplier network unified integration patch
 // absolute grand master architecture lock
+// unified order model schema patched
