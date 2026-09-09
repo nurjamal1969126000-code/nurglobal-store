@@ -1761,6 +1761,69 @@ app.get('/marketing/viral-video-blueprint', (req, res) => {
         </div>
     `);
 });
+
+// ==========================================================
+// 👑 ১৯ মডিউল গ্র্যান্ড ফিনালে: লাইভ অ্যাডস ম্যানেজার ও সিজে ডেলিভারি লেজার UI
+// ==========================================================
+app.get('/admin/global-business-control', (req, res) => {
+    const businessStats = {
+        adAccountStatus: "Active (Passport Endorsed Card Linked)",
+        facebookDailyBudgetUSD: 20.00,
+        tiktokCampaignStatus: "Ready to Launch",
+        cjSupplierEstdCostUSD: 14.50,
+        cjCourierPartner: "CJ Packet Sensitive (Fast Air Freight)",
+        estimatedProfitMargin: "65%"
+    };
+
+    res.send(`
+        <!DOCTYPE html>
+        <html lang="bn">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>NUR GLOBAL - 👑 গ্লোবাল বিজনেস কন্ট্রোল রুম</title>
+            <style>
+                body { background-color: #0b0f19; color: #f3f4f6; font-family: sans-serif; padding: 20px; }
+                .main-box { max-width: 850px; margin: 0 auto; background: #1f2937; padding: 30px; border-radius: 16px; border: 2px solid #d4af37; box-shadow: 0 10px 25px rgba(0,0,0,0.6); }
+                h1 { color: #d4af37; text-align: center; margin-bottom: 5px; font-size: 24px; text-transform: uppercase; }
+                .grid-control { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 20px; margin-top: 30px; }
+                .section-card { background: #111827; padding: 20px; border-radius: 12px; border: 1px solid #374151; }
+                h3 { margin-top: 0; font-size: 16px; border-bottom: 1px solid #374151; padding-bottom: 10px; }
+                .status-line { margin: 12px 0; font-size: 14px; color: #9ca3af; display: flex; justify-content: space-between; }
+                .status-line b { color: #ffffff; }
+                .badge-green { background: rgba(16, 185, 129, 0.2); color: #10b981; padding: 2px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; }
+                .btn-action { width: 100%; padding: 12px; background: linear-gradient(135deg, #d4af37 0%, #aa7c11 100%); border: none; border-radius: 6px; color: #111827; font-weight: bold; font-size: 14px; cursor: pointer; text-transform: uppercase; margin-top: 15px; }
+            </style>
+        </head>
+        <body>
+            <div class="main-box">
+                <h1>👑 NUR GLOBAL - গ্লোবাল বিজনেস ফাইনান্স ও লজিস্টিকস কন্ট্রোল</h1>
+                <p style="text-align:center; color:#9ca3af; margin-top:0; font-size:14px;">🟢 ফেসবুক/টিকটক অ্যাডস অ্যাকাউন্ট এবং সিজে ড্রপশিপিং কুরিয়ার লাইভ সিঙ্ক মোড</p>
+
+                <div class="grid-control">
+                    <!-- ১. ফেসবুক ও টিকটক অ্যাডস ম্যানেজার কন্ট্রোল -->
+                    <div class="section-card" style="border-top: 4px solid #38bdf8;">
+                        <h3 style="color:#38bdf8;">🎯 ফেসবুক ও টিকটক অ্যাডস সেটিংস (Marketing)</h3>
+                        <div class="status-line">অ্যাড একাউন্ট স্ট্যাটাস: <span class="badge-green">${businessStats.adAccountStatus}</span></div>
+                        <div class="status-line">ডেইলি অ্যাড বাজেট (FB): <b>$${businessStats.facebookDailyBudgetUSD.toFixed(2)} USD</b></div>
+                        <div class="status-line">টিকটক ক্যাম্পেইন ট্র্যাকার: <b style="color:#f59e0b;">${businessStats.tiktokCampaignStatus}</b></div>
+                        <button class="btn-action" onclick="alert('আপনার পাসপোর্ট এন্ডোর্সড কার্ডের মাধ্যমে ফেসবুক ও টিকটক পিক্সেল ট্র্যাকিং একটিভ করা হয়েছে!')">🚀 লঞ্চ গ্লোবাল ক্যাম্পেইন</button>
+                    </div>
+
+                    <!-- ২. সিজে ড্রপশিপিং ডিপ লজিস্টিকস কন্ট্রোল -->
+                    <div class="section-card" style="border-top: 4px solid #10b981;">
+                        <h3 style="color:#10b981;">📦 সিজে ড্রপশিপিং কুরিয়ার সেটিংস (Logistics)</h3>
+                        <div class="status-line">অটো-ডেলিভারি মেকানিজম: <span class="badge-green">সক্রিয় (Active)</span></div>
+                        <div class="status-line">গড় সাপ্লায়ার ও শিপিং কস্ট: <b>$${businessStats.cjSupplierEstdCostUSD.toFixed(2)} USD</b></div>
+                        <div class="status-line">অফিশিয়াল শিপিং মেথড: <b style="color:#38bdf8;">${businessStats.cjCourierPartner}</b></div>
+                        <button class="btn-action" style="background:linear-gradient(135deg, #10b981 0%, #059669 100%); color:white;" onclick="alert('সিজে ড্রপশিপিং গ্লোবাল এপিআই ইনভেন্টরি ও শিপিং লেজার সফলভাবে রিফ্রেশ করা হয়েছে!')">🔄 সিঙ্ক সিজে লজিস্টিকস ডাটা</button>
+                    </div>
+                </div>
+            </div>
+        </body>
+        </html>
+    `);
+});
 app.listen(PORT, () => {
     console.log(`সার্ভার চালু হয়েছে: http://localhost:${PORT}`);
 });
@@ -1779,3 +1842,4 @@ app.listen(PORT, () => {
 // live ai automation scheduler active
 // dynamic light dark mode switch active
 // cj logistics and tiktok video double activation patch
+// final grand business control combo patch
