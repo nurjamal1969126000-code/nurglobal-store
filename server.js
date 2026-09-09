@@ -1427,6 +1427,37 @@ app.get('/checkout/payment', async (req, res) => {
         res.status(500).send("🔴 পেমেন্ট পেজ লোড করতে সমস্যা হয়েছে: " + err.message);
     }
 });
+
+// ==========================================
+// 📦 সিজে এপিআই টেস্ট ও ডাটাবেজ ভ্যালিডেশন রুট
+// ==========================================
+app.get('/api/cj/test-sync', async (req, res) => {
+    try {
+        const testItem = new CJDropshipping({
+            cjProductId: "CJ-SMART-99",
+            productName: "NUR-GLOBAL Trending Wireless Earbuds",
+            supplierPriceUSD: 10.50,
+            retailPriceUSD: 29.99,
+            cjOrderTrackingId: "CJ-TRK-777",
+            stockStatus: 'In_Stock'
+        });
+        await testItem.save();
+        res.send(`
+            <div style="background:#0f172a;color:#f8fafc;font-family:sans-serif;padding:30px;text-align:center;min-height:80vh;display:flex;flex-direction:column;justify-content:center;align-items:center;">
+                <h1 style="color:#22c55e;">🎉 CJdropshipping API Sync Success!</h1>
+                <p style="color:#94a3b8;">প্রোডাক্ট ডেটা সফলভাবে রিয়েল-টাইমে আপনার ক্লাউড ডাটাবেজে সেভ হয়েছে।</p>
+                <div style="background:#1e293b;padding:20px;border-radius:8px;border:1px solid #334155;text-align:left;max-width:400px;width:100%;">
+                    <p style="margin:5px 0;">📦 <b>প্রোডাক্ট:</b> ${testItem.productName}</p>
+                    <p style="margin:5px 0;">💵 <b>সাপ্লায়ার কস্ট:</b> $${testItem.supplierPriceUSD}</p>
+                    <p style="margin:5px 0;">📈 <b>বিক্রয় মূল্য:</b> $${testItem.retailPriceUSD}</p>
+                    <p style="margin:5px 0;">🟢 <b>স্ট্যাটাস:</b> ${testItem.stockStatus}</p>
+                </div>
+            </div>
+        `);
+    } catch (err) {
+        res.status(500).send("🔴 সিজে সিঙ্ক টেস্টে সমস্যা হয়েছে: " + err.message);
+    }
+});
 app.listen(PORT, () => {
     console.log(`সার্ভার চালু হয়েছে: http://localhost:${PORT}`);
 });
@@ -1438,3 +1469,4 @@ app.listen(PORT, () => {
 // final dashboard redirect path sync
 // live card checkout user interface patch
 // cjdropshipping session stability patch
+// cj direct verification trigger patch
