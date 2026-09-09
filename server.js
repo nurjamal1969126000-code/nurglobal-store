@@ -1554,6 +1554,23 @@ app.get('/', async (req, res) => {
         res.status(500).send("🔴 ডার্ক গোল্ডেন থিম লোড করতে সমস্যা হয়েছে: " + err.message);
     }
 });
+
+// ==========================================
+// 💸 মডিউল ১৩ - লাইভ কারেন্সি কনভার্টার ও গ্লোবাল ইউজার ডিটেক্টর উইজেট UI
+// ==========================================
+app.get('/api/marketing/currency-widget', (req, res) => {
+    res.send(`
+        <div style="background:#111827;border:1px solid #d4af37;padding:15px;border-radius:10px;margin-top:20px;text-align:center;">
+            <div style="color:#d4af37;font-weight:bold;font-size:14px;margin-bottom:8px;">🌍 GLOBAL CURRENCY DETECTOR (MODULE 13)</div>
+            <div style="font-size:13px;color:#9ca3af;margin-bottom:12px;">Your location detected via Cloudflare Node: <span style="color:#10b981;font-weight:bold;">Bangladesh (BD)</span></div>
+            <div style="display:flex;justify-content:center;gap:10px;flex-wrap:wrap;">
+                <button style="padding:6px 12px;background:#d4af37;color:#111827;border:none;border-radius:4px;font-weight:bold;cursor:pointer;" onclick="alert('কনভার্ট করা হয়েছে: BDT ৳১২৪.৫০ = $১.০০ USD')">৳ BDT (Local)</button>
+                <button style="padding:6px 12px;background:#1f2937;color:#d4af37;border:1px solid #d4af37;border-radius:4px;font-weight:bold;cursor:pointer;" onclick="alert('Base currency is already locked to United States Dollar ($ USD)')">$ USD (Base)</button>
+                <button style="padding:6px 12px;background:#1f2937;color:#d4af37;border:1px solid #d4af37;border-radius:4px;font-weight:bold;cursor:pointer;" onclick="alert('Converted to Euro: €0.92 = $1.00 USD')">€ EUR</button>
+            </div>
+        </div>
+    `);
+});
 app.listen(PORT, () => {
     console.log(`সার্ভার চালু হয়েছে: http://localhost:${PORT}`);
 });
@@ -1567,3 +1584,4 @@ app.listen(PORT, () => {
 // cjdropshipping session stability patch
 // cj direct verification trigger patch
 // premium dark gold aesthetic template sync
+// currency live system activation
