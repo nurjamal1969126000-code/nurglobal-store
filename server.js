@@ -1682,6 +1682,30 @@ app.get('/', async (req, res) => {
         res.status(500).send("🔴 থিম আপডেট করতে সমস্যা হয়েছে: " + err.message);
     }
 });
+
+// ==========================================
+// 🌓 লাইভ লাইট/ডার্ক মোড টগল থিম ইঞ্জিন (UI Module Addition)
+// ==========================================
+app.get('/api/theme/toggle-script', (req, res) => {
+    res.send(`
+        // এই এআই স্ক্রিপ্টটি আপনার মূল হোমপেজে ব্যাকগ্রাউন্ড কালার স্বয়ংক্রিয়ভাবে অদল-বদল করবে
+        function toggleLuxuryTheme() {
+            const body = document.body;
+            const currentBg = window.getComputedStyle(body).backgroundColor;
+            
+            // যদি ডার্ক থাকে তবে লাইট করো, লাইট থাকলে ডার্ক করো
+            if (currentBg === "rgb(11, 15, 23)" || currentBg === "#0b0f17") {
+                body.style.backgroundColor = "#f8fafc";
+                body.style.color = "#0f172a";
+                alert("🌓 থিম পরিবর্তন করা হয়েছে: Elegant Light Mode Active!");
+            } else {
+                body.style.backgroundColor = "#0b0f17";
+                body.style.color = "#f3f4f6";
+                alert("👑 থিম পরিবর্তন করা হয়েছে: Premium Royal Dark Gold Active!");
+            }
+        }
+    `);
+});
 app.listen(PORT, () => {
     console.log(`সার্ভার চালু হয়েছে: http://localhost:${PORT}`);
 });
@@ -1698,3 +1722,4 @@ app.listen(PORT, () => {
 // currency live system activation
 // homepage integrated currency patch v2
 // live ai automation scheduler active
+// dynamic light dark mode switch active
